@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Book Search</title>
+
+	<link rel='stylesheet' type='text/css' href='styles/main.css' />
+
+	<script type="text/javascript">
+		function loading(){
+            document.getElementById('loading').style.display = 'flex'
+        }
+	</script>
+</head>
+
+  <body>
+    <nav>
+      <h1>Book Search</h1>
+    </nav>
+
+	  <section>
+		<form method="post" action='/search' onsubmit="loading();">
+			<label for="search-text">Search For Books</label>
+      <input name="search-text" id="search-text" required>
+      <label for='genre-filter'>Filter By Genre</label>
+      <select name='genre-filter' id='genre-filter'>
+        {% if genre_list %}
+          {% for genre in genre_list %}
+            <option value='{{ genre.id }}'>{{ genre.name }}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+      <label for="sort-type">Sort By</label>
+      <select name='sort-type' id='sort-type'>
+        <option value='title-high' selected>Title (A-Z)</option>
+        <option value='title-low'>Title (Z-A)</option>
+        <option value='price-high'>Price (Highest)</option>
+        <option value='price-low'>Price (Lowest)</option>
+      </select>
+      <input type="submit" value="Search">
+    </form>
+
+    <form method='post' action='/clear'>
+      <input type="submit" value="Clear Results">
+    </form>
+    <form method='post' action='/search-history'>
+      <input type="submit" value="Search History">
+    </form>
+    </section>
+
+    <div id='loading' class='loading-section animation-container'>
+      <svg class='saving-animation' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle class='background-circle' cx="50" cy="50" r="45" />
+          <circle class='animating-circle' cx="50" cy="50" r="45" />
+      </svg>
+      <div class='inner-animation'>
+        Hang Tight! We're looking for your books.
+      </div>
+    </div>
+    <section class='lists-container'>
+      <section>
+        {% if found_books %}
+          <h3>Found Books</h3>
+          <ul class='book-list'>
+            {% for book in found_books %}
+              <li class='book-item'>
+                {% if book['description'] %}
+                  <div>
+                    {{ book['title'] }}
+                  </div>
+                {% else %}
+                  <form method="post" action='/book-info'>
+                    <input style='display: none;' name='book-url' value='{{ book['url'] }}' />
+                    <input type='submit' class='btn-link' value='{{ book['short_title'] }}' />
+                  </form>
+                {% endif %}
+                <div>
+                  {{ book['price'] }}
+                  {% if book['stars'] %}
+                    {{ book['stars'] }} stars
+                  {% endif %}
+                </div>
+
+                <div>
+                  {% if book['description'] %}
+                    {{ book['description'] }}
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+          {% elif found_books == [] %}
+            <div class='no-results'>Try a new search</div>
+          {% endif %}
+      </section>
+
+      <section>
+        {% if search_history %}
+        <h3>Search History</h3>
+        <ul>
+          {% for item in search_history %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </section>
+    </section>
+  </body>
+</html>

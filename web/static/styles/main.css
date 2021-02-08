@@ -1,0 +1,143 @@
+:root {
+  --text-color: #292929;
+  --light-gray: #efefef;
+  --big-blue: #039ddd;
+}
+
+body {
+  font-size: 14px;
+  font-family: Helvetica Neue, Arial, sans-serif;
+  color: var(--text-color);
+}
+
+h1 {
+  font-size: 42px;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+h4,
+h5 {
+  font-size: 16px;
+}
+
+.no-results {
+  margin-top: 50px;
+}
+
+.book-list {
+  margin-top: 50px;
+  list-style: none;
+  padding: 0;
+}
+
+.book-item {
+  font-size: 16px;
+  padding: 20px 0;
+}
+
+.btn-link {
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+.btn-link:hover {
+  cursor: pointer;
+  color: var(--big-blue);
+}
+
+.lists-container {
+  display: flex;
+  padding: 50px;
+}
+
+.lists-container section {
+  flex: 1;
+}
+
+/* LOADING ANIMATION */
+.loading-section {
+  margin-top: 50px;
+  display: none;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.background-circle {
+  fill: transparent;
+  max-width: 250px;
+  stroke-width: 3;
+  stroke: var(--light-gray);
+}
+
+.animating-circle {
+  animation-duration: 1.4s;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+  animation-name: progress--animation;
+  animation-timing-function: ease-in-out;
+  fill: transparent;
+  max-width: 250px;
+  stroke: var(--big-blue);
+  stroke-dasharray: 283;
+  stroke-dashoffset: 260;
+  stroke-width: 3;
+  transform-origin: 50% 50%;
+}
+
+@keyframes progress--animation {
+  0%,
+  25% {
+    stroke-dashoffset: 260;
+    transform: rotate(0);
+  }
+  
+  50%,
+  75% {
+    stroke-dashoffset: 80;
+    transform: rotate(45deg);
+  }
+
+  100% {
+    stroke-dashoffset: 260;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes saving--animation {
+  0% {
+    transform: rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+.inner-animation {
+  position: absolute;
+  text-align: center;
+  top: 80px;
+  max-width: 120px;
+  font-size: 18px;
+}
+
+.saving-animation {
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-name: saving--animation;
+  animation-timing-function: linear;
+  max-width: 250px;
+}
