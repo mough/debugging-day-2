@@ -237,7 +237,7 @@ def more_book_info():
   
   def add_desc(book, idx):
     if book['title'] == book_title:
-      book.description = book_description
+      book['description'] = book_description
     return book
 
   found_books = map(found_books, add_desc)
@@ -254,6 +254,6 @@ def get_search_history():
   global found_books
   global search
   # returns a list of the past searches the user has made. The list is added to in the search function
-  return render_template('index.html', genre_list=genre_list, found_books=found_books, search_history=search)
+  return render_template('index.html', genre_list=genre_list, found_books=found_books, search_history=search_history)
 
 app.run(host='0.0.0.0', port=8080)
