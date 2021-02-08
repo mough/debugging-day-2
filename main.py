@@ -19,6 +19,12 @@ def map(item_list, callback):
 
   return new_list
 
+'''we used this to test our assumptions 
+as to the functionality of the map() function defined above'''
+# def add_one(num, idx):
+#   return num + 1
+# print(map([1, 2, 3], add_one))
+
 def filter(item_list, predicate):
   filtered_list = []
   def filter_item(item, idx):
@@ -50,26 +56,27 @@ def index():
 @app.route('/clear', methods=['POST'])
 def clear():
   global found_books
-  found_books = None()
+  found_books = None
 
   return redirect('/find-books')
 
 # goes to the main page of the site and grabs all of the genres listed on the left hand side
 def get_genre_list():
-  books_page = requests.get(books_to_scrape)
+  books_page = requests.get(books_to_scrape_url)
   soup = BeautifulSoup(books_page.content, 'html.parser')
   full_genre_list = soup.find(class_='side_categories').ul.li.ul
+  # print('1 full_genre_list', full_genre_list)
 
   # formats the genres to make them easy to use in our index.html
   def get_genres(item, idx):
     genre = item.a.get_text().strip()
     id = genre.lower().replace(' ', '-')
     return {
-      name: genre,
-      id: f'{id}_{idx + 2}'
+      'name': genre,
+      'id': f'{id}_{idx + 2}'
     }
-  full_genre_list = map(full_genre_list.find_all('li'), get_genres)[0]
-
+  full_genre_list = map(full_genre_list.find_all('li'), get_genres)
+  # print('2 full_genre_list', full_genre_list)
   return full_genre_list
 
 # Iterates through every page of the selected genre and grabs all of the books
@@ -115,7 +122,7 @@ def generate_book_list(genre):
 def get_star_count(book):
   star_section = book.find(class_='star-rating')
   star_count_section = star_section['class']
-  star_count_text = star_count_section[0]
+  star_count_text = star_count_section[1]
 
   star_count = 3
 
@@ -134,7 +141,7 @@ def get_star_count(book):
 
 # truncates the titles to whatever max_length is set
 def truncate_titles(title, max_length):
-  truncated_title = title[max_length:0]
+  truncated_title = title[0:max_length]
   return f'{truncated_title}...'
 
 # iterates over all books in list and gets the title, price, and unique url for each book
@@ -166,6 +173,7 @@ def search_get():
 
 # sorts books by either price or title
 def sort_books(books, sort_dir):
+  # print("sort_dir ", sort_dir)
   def price_sort(book):
     return float(book['price'][1:len(book['price'])])
 
@@ -193,7 +201,7 @@ def search():
   search_history.append(search_text)
 
   # Only go and grab books if there is search text present
-  if not search_tex:
+  if search_text:
     selected_genre = request.form.get('genre-filter')
     sort_direction = request.form.get('sort-type')
 
@@ -203,7 +211,7 @@ def search():
       full_book_list = generate_book_list(selected_genre)
       genre_book_cache[selected_genre] = full_book_list
 
-    book_info = parse_book_info([full_book_list[0]])
+    book_info = parse_book_info(full_book_list)
     
     # filters the full list of books by the search string
     def only_matching_books(book):
@@ -212,7 +220,7 @@ def search():
       return False
 
     filtered_books = filter(book_info, only_matching_books)
-    found_books = sort_books(filtered_books, 'price-low')
+    found_books = sort_books(filtered_books, sort_direction)
 
   return redirect('/find-books')
 
